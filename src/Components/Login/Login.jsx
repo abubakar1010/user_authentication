@@ -1,13 +1,44 @@
-import { useState } from "react";
+
+import { useRef, useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa6";
+import auth from "../../firebase/firebase.config";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 const Login = () => {
 
     const [showPassword, setShowPassword] = useState(false)
 
+    const emailRef = useRef(null);
+    const passwordRef = useRef(null);
+
+    
+    const [success, setSuccess] = useState("");
+    const [registrationError, setRegistrationError] = useState("")
+
     const handleShowPassword = () => {
         setShowPassword(!showPassword)
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+
+        const email = emailRef.current.value;
+
+        const password = passwordRef.current.value;
+
+        setRegistrationError("")
+        setSuccess("")
+
+        signInWithEmailAndPassword( auth, email, password)
+        .then( (result) => {
+            console.log(result.user);
+            setSuccess("Logged in successful" )
+        })
+        .catch( (error) => {
+            console.error(error.message);
+            setRegistrationError(error.message)
+        })
     }
 
   return (
@@ -24,7 +55,7 @@ const Login = () => {
               </p>
             </div>
             <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
-              <form className="card-body">
+              <form onSubmit={(e) => handleSubmit(e)} className="card-body">
                 <div className="form-control">
                   <label className="label">
                     <span className="label-text">Email</span>
@@ -33,6 +64,7 @@ const Login = () => {
                     type="email"
                     placeholder="email"
                     className="input input-bordered"
+                    ref={emailRef}
                     required
                   />
                   
@@ -45,6 +77,7 @@ const Login = () => {
                     type={ showPassword? "text" : "password"}
                     placeholder="password"
                     className="input input-bordered"
+                    ref={passwordRef}
                     required
                   />
                   <div onClick={handleShowPassword} className=" absolute top-14 right-6  ">
@@ -58,6 +91,14 @@ const Login = () => {
                       Forgot password?
                     </a>
                   </label>
+                  <div>
+                    {
+                        success&& <p className=" text-red-600 text-xl font-medium">{success}</p>
+                    }
+                    {
+                        registrationError&& <p className=" text-red-600 text-xl font-medium">{registrationError}</p>
+                    }
+                  </div>
                 </div>
                 <div className="form-control mt-6">
                   <button className="btn btn-primary">Login</button>
