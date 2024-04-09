@@ -1,4 +1,14 @@
+import { useState } from "react";
+import { FaEye } from "react-icons/fa";
+import { FaEyeSlash } from "react-icons/fa6";
+
 const Login = () => {
+
+    const [showPassword, setShowPassword] = useState(false)
+
+    const handleShowPassword = () => {
+        setShowPassword(!showPassword)
+    }
 
   return (
     <>
@@ -25,17 +35,24 @@ const Login = () => {
                     className="input input-bordered"
                     required
                   />
+                  
                 </div>
-                <div className="form-control">
+                <div className="form-control relative">
                   <label className="label">
                     <span className="label-text">Password</span>
                   </label>
                   <input
-                    type="password"
+                    type={ showPassword? "text" : "password"}
                     placeholder="password"
                     className="input input-bordered"
                     required
                   />
+                  <div onClick={handleShowPassword} className=" absolute top-14 right-6  ">
+                    {
+                        showPassword? <FaEye /> : <FaEyeSlash />
+                    }
+
+                  </div>
                   <label className="label">
                     <a href="#" className="label-text-alt link link-hover">
                       Forgot password?
